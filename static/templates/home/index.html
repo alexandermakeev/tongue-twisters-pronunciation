@@ -1,0 +1,26 @@
+<div class="top-phrase text-center"  ng-init="recorderCtrl.init()">
+    <h3>Please select a level</h3>
+</div>
+<form class="text-center">
+    <div class="radio-inline">
+        <label><h3><input name="radioBtn" type="radio" ng-click="recorderCtrl.setTimer(7000)">
+                <span class="glyphicon glyphicon-align-justify green-level" aria-hidden="true">
+                </span> Easy</h3>
+        </label>
+    </div>
+    <div class="radio-inline">
+        <label><h3><input name="radioBtn" type="radio" ng-click="recorderCtrl.setTimer(5000)" checked="checked">
+                <span class="glyphicon glyphicon-align-justify orange-level" aria-hidden="true">
+                </span> Medium</h3>
+        </label>
+    </div>
+    <div class="radio-inline">
+        <label><h3><input name="radioBtn" type="radio" ng-click="recorderCtrl.setTimer(3000)">
+                <span class="glyphicon glyphicon-align-justify red-level" aria-hidden="true">
+                </span> Hard</h3>
+        </label>
+    </div>
+</form>
+<div class="text-center top-small">
+    <button class="btn btn-primary btn-md" onclick="window.location.href='/#/1'">Continue</button>
+</div>

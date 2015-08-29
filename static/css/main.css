@@ -1,0 +1,24 @@
+.green-level {
+    color: #2ECC40;
+}
+.orange-level {
+    color: #FF851B;
+}
+.red-level {
+    color: #FF4136;
+}
+.glyphicon-align-justify {
+    font-size: 30px;
+}
+.top-home {
+    margin-top: 200px;
+}
+.top-phrase {
+    margin-top: 150px;
+}
+.top-small {
+    margin-top: 10px;
+}
+body {
+    background-color: #DDDDDD;
+}

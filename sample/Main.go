@@ -9,9 +9,9 @@ import (
 
 func main() {
 	router := mux.NewRouter().StrictSlash(true)
-	router.Handle("/", http.FileServer(http.Dir("static")))
-	router.HandleFunc("/api/translate", PostPhrase)
-	router.HandleFunc("/api/phrases/{level}", GetPhrase)
-
+	router.HandleFunc("/api/translate/{level}", PostPhrase).Methods("POST")
+	router.HandleFunc("/api/phrases/{level}", GetPhrase).Methods("GET")
+	router.PathPrefix("/").Handler(http.FileServer(http.Dir("./static/")))
+	http.Handle("/", router)
 	log.Fatal(http.ListenAndServe(":9999", router))
 }

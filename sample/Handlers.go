@@ -22,25 +22,27 @@ const (
 )
 
 var phrases Phrases = Phrases{
-		Phrase{Content: "Hello World!"},
-		Phrase{Content: "World Wide Web."},
-		Phrase{Content: "Three free throws."},
-		Phrase{Content: "The blue bluebird blinks."},
-		Phrase{Content: "Red leather yellow leather."},
-		Phrase{Content: "Four fine fresh fish for you."},
-		Phrase{Content: "Kitty caught the kitten in the kitchen."},
-		Phrase{Content: "How can a clam cram in a clean cream can?"},
-		Phrase{Content: "Can you can a can as a canner can can a can?"},
-		Phrase{Content: "I thought I thought of thinking of thanking you."},
-		Phrase{Content: "To put a pipe in byte mode, type PIPE TYPE BYTE."},
-		Phrase{Content: "I scream, you scream, we all scream for ice cream!"},
-		Phrase{Content: "If you want to buy, buy, if you don't want to buy, bye, bye!"},
-		Phrase{Content: "One-one was a race horse. Two-two was one too. One-one won one race. Two-two won one too."},
-		Phrase{Content: "Whether the weather is warm, whether the weather is hot, we have to put up with the weather, whether we like it or not."},
+	Phrase{Content: "Hello World!"},
+	Phrase{Content: "World Wide Web."},
+	Phrase{Content: "Three free throws."},
+	Phrase{Content: "The blue bluebird blinks."},
+	Phrase{Content: "Red leather yellow leather."},
+	Phrase{Content: "Four fine fresh fish for you."},
+	Phrase{Content: "Kitty caught the kitten in the kitchen."},
+	Phrase{Content: "How can a clam cram in a clean cream can?"},
+	Phrase{Content: "Can you can a can as a canner can can a can?"},
+	Phrase{Content: "I thought I thought of thinking of thanking you."},
+	Phrase{Content: "To put a pipe in byte mode, type PIPE_TYPE_BYTE."},
+	Phrase{Content: "I scream, you scream, we all scream for ice cream!"},
+	Phrase{Content: "If you want to buy, buy, if you don't want to buy, bye, bye!"},
+	Phrase{Content: "One-one was a race horse. Two-two was one too. One-one won one race. Two-two won one too."},
+	Phrase{Content: "Whether the weather is warm, whether the weather is hot, we have to put up with the weather, whether we like it or not."},
 }
 
 func GetPhrase(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%s\t%s\t%s", r.Method, r.RequestURI, time.Since(time.Now()))
+	w.Header().Set("Content-Type", "application/json")
+
 	vars := mux.Vars(r)
 	phraseId := vars["level"]
 	id, err:= strconv.Atoi(phraseId)
@@ -59,6 +61,17 @@ func GetPhrase(w http.ResponseWriter, r *http.Request) {
 
 func PostPhrase(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%s\t%s\t%s", r.Method, r.RequestURI, time.Since(time.Now()))
+	w.Header().Set("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	phraseId := vars["level"]
+	id, err:= strconv.Atoi(phraseId)
+	if err != nil || len(phrases) < id || id < 1 {
+		if err := json.NewEncoder(w).Encode(Error{StatusCode:400, Message:"Level not found"}); err != nil {
+			panic(err)
+		}
+		return
+	}
 	file, _, err := r.FormFile("file")
 	if err != nil {
 		if err := json.NewEncoder(w).Encode(Error{StatusCode:400, Message:"File not found"}); err != nil {
@@ -67,16 +80,6 @@ func PostPhrase(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	defer file.Close()
-
-	phraseId := r.FormValue("level")
-
-	id, err := strconv.Atoi(phraseId)
-	if err != nil || len(phrases) < id || id < 1 {
-		if err := json.NewEncoder(w).Encode(Error{StatusCode:404, Message:"Level not found"}); err != nil {
-			panic(err)
-		}
-		return
-	}
 
 	out, err := os.Create(filePath)
 	if err != nil {
@@ -96,7 +99,7 @@ func PostPhrase(w http.ResponseWriter, r *http.Request) {
 	
 	var edited string = Translate(filePath)
 	edited = Parse(edited)
-	var original = FindPhrase(id).Content
+	var original string = FindPhrase(id).Content
 	var success bool = strings.EqualFold(Edit(original), Edit(edited))
 	result := Result{Right:success, PronouncedPhrase:edited}
 
@@ -112,7 +115,7 @@ func Translate(file string) string {
 		panic(err)
 	}
 
-	req.Header.Set("Content-Type", "audio/l16; rate=16000")
+	req.Header.Set("Content-Type", "audio/l16; rate=44100;")
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
@@ -134,6 +137,7 @@ func Edit(change string) string {
 	change = strings.Replace(change, "!", "", -1)
 	change = strings.Replace(change, ",", "", -1)
 	change = strings.Replace(change, ".", "", -1)
+	change = strings.Replace(change, "_", " ", -1)
 	return strings.ToLower(change)
 }
 
