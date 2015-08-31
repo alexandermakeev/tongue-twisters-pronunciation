@@ -13,7 +13,7 @@
 .top-home {
     margin-top: 200px;
 }
-.top-phrase {
+.top-sentence {
     margin-top: 150px;
 }
 .top-small {
@@ -21,4 +21,10 @@
 }
 body {
     background-color: #DDDDDD;
+    font-family: 'BariolRegular'
+}
+
+@font-face {
+	font-family: BariolRegular;
+	src: url("Bariol_Regular.otf") format("opentype");
 }

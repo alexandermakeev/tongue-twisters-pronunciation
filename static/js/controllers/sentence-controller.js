@@ -1,8 +1,8 @@
 (function() {
-    angular.module('IYP').controller('PhraseController', ['$routeParams', 'Phrase', function($routeParams, Phrase) {
+    angular.module('IYP').controller('SentenceController', ['$routeParams', 'Sentence', function($routeParams, Sentence) {
         var controller = this;
-        Phrase.getById($routeParams.level).success(function(data) {
-           controller.phrase = data;
+        Sentence.getById($routeParams.level).success(function(data) {
+           controller.sentence = data;
            controller.currentLevel = parseInt($routeParams.level);
            controller.nextLevel = parseInt($routeParams.level) + 1;
            controller.previousLevel = parseInt($routeParams.level) - 1;

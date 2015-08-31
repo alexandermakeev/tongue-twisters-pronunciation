@@ -4,12 +4,6 @@
         this.setTimer = function(timer) {
             this.timer = timer;
         };
-        this.init = function() {
-            Recorder.record({
-                start: function() {}
-            });
-            Recorder.stop();
-        };
         this.record = function(level) {
             var time = this.timer / 1000;
             var i = time;
@@ -23,29 +17,40 @@
 
             }, 1000);
 
-            Recorder.record({
-                start: function() {}
-            });
+            recorder && recorder.record();
+
             setTimeout(function() {
-                Recorder.stop();
-                Recorder.upload({
-                    url:        "http://localhost:9999/api/translate/" + level,
-                    audioParam: "file",
+                recorder && recorder.stop();
+                post(level);
+            }, this.timer);
+        };
+        function post(level) {
+            recorder && recorder.exportWAV(function(blob) {
+                blob.lastModifiedDate = new Date();
+                blob.name = "file";
+
+                var data = new FormData();
+                data.append('file', blob);
+                $.ajax({
+                    url: 'http://localhost:9999/api/translate/' + level,
+                    data: data,
+                    cache: false,
+                    contentType: false,
+                    processData: false,
+                    type: 'POST',
                     success: function(data){
-                        var parsed = JSON.parse(data);
                         var div = document.getElementById("inner");
                         var response = document.createElement('div');
-                        if (parsed.right == true) {
+                        if (data.right == true) {
                             response.innerHTML = '<div class="bg-success">Yay! You are right!</div>';
                         } else {
-                            response.innerHTML = '<div class="bg-danger">You said: <i>"' + parsed.phrase + '"</i></div>';
+                            response.innerHTML = '<div class="bg-danger">You said: <i>"' + data.sentence + '"</i></div>';
                         }
                         div.appendChild(response);
                         $compile(response)($scope);
                     }
                 });
-            }, this.timer);
-
-        };
+            });
+        }
     })
 })();

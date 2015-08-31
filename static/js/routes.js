@@ -8,9 +8,9 @@
                templateUrl: 'templates/congrats/index.html'
            })
            .when('/:level', {
-               templateUrl: 'templates/phrase/index.html',
-               controller: 'PhraseController',
-               controllerAs: 'phraseCtrl'
+               templateUrl: 'templates/sentence/index.html',
+               controller: 'SentenceController',
+               controllerAs: 'sentenceCtrl'
            })
            .otherwise({redirectTo: '/'});
     });

@@ -1,7 +1,5 @@
 package main
 
-type Phrase struct {
+type Sentence struct {
 	Content string `json:"content"`
 }
-
-type Phrases []Phrase
