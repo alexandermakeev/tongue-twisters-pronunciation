@@ -1,10 +1,12 @@
 (function() {
     angular.module("IYP").controller('RecorderController', function($scope, $compile) {
-        this.timer = 7000;
+        this.timer = 3000;
         this.setTimer = function(timer) {
             this.timer = timer;
         };
         this.record = function(level) {
+            var sound = new Audio("lib/record_start.wav");
+            sound.play();
             var time = this.timer / 1000;
             var i = time;
             var counterBack = setInterval(function(){
@@ -20,8 +22,11 @@
             recorder && recorder.record();
 
             setTimeout(function() {
+                var sound = new Audio("lib/record_stop.wav");
+                sound.play();
                 recorder && recorder.stop();
                 post(level);
+                recorder && recorder.clear();
             }, this.timer);
         };
         function post(level) {
@@ -32,7 +37,7 @@
                 var data = new FormData();
                 data.append('file', blob);
                 $.ajax({
-                    url: 'http://localhost:9999/api/translate/' + level,
+                    url: baseUrl + '/api/translate/' + level,
                     data: data,
                     cache: false,
                     contentType: false,

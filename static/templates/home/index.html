@@ -1,26 +1,26 @@
 <div class="top-sentence text-center">
     <h3>Please select a level</h3>
 </div>
-<form class="text-center">
+<form class="text-center" ng-init="level=1">
     <div class="radio-inline">
-        <label><h3><input name="radioBtn" type="radio" ng-click="recorderCtrl.setTimer(7000)">
+        <label><h3><input name="radioBtn" type="radio" ng-click="recorderCtrl.setTimer(3000);level=1" checked="checked">
                 <span class="glyphicon glyphicon-align-justify green-level" aria-hidden="true">
                 </span> Easy</h3>
         </label>
     </div>
     <div class="radio-inline">
-        <label><h3><input name="radioBtn" type="radio" ng-click="recorderCtrl.setTimer(5000)" checked="checked">
+        <label><h3><input name="radioBtn" type="radio" ng-click="recorderCtrl.setTimer(6000);level=11">
                 <span class="glyphicon glyphicon-align-justify orange-level" aria-hidden="true">
                 </span> Medium</h3>
         </label>
     </div>
     <div class="radio-inline">
-        <label><h3><input name="radioBtn" type="radio" ng-click="recorderCtrl.setTimer(3000)">
+        <label><h3><input name="radioBtn" type="radio" ng-click="recorderCtrl.setTimer(10000);level=21">
                 <span class="glyphicon glyphicon-align-justify red-level" aria-hidden="true">
                 </span> Hard</h3>
         </label>
     </div>
 </form>
 <div class="text-center top-small">
-    <button class="btn btn-primary btn-md" onclick="window.location.href='/#/1'">Continue</button>
+    <a ng-href="/#/{{level}}" class="btn btn-primary btn-sm">Continue</a>
 </div>

@@ -21,24 +21,20 @@ const (
     url string = "https://www.google.com/speech-api/v2/recognize?output=json&lang=en-us&key=" + key
 )
 
-
-var sentences []Sentence = []Sentence{
-	Sentence{Content: "Hello World!"},
-	Sentence{Content: "World Wide Web."},
-	Sentence{Content: "Three free throws."},
-	Sentence{Content: "The blue bluebird blinks."},
-	Sentence{Content: "Red leather yellow leather."},
-	Sentence{Content: "Four fine fresh fish for you."},
-	Sentence{Content: "Kitty caught the kitten in the kitchen."},
-	Sentence{Content: "How can a clam cram in a clean cream can?"},
-	Sentence{Content: "Can you can a can as a canner can can a can?"},
-	Sentence{Content: "I thought I thought of thinking of thanking you."},
-	Sentence{Content: "To put a pipe in byte mode, type PIPE_TYPE_BYTE."},
-	Sentence{Content: "I scream, you scream, we all scream for ice cream!"},
-	Sentence{Content: "If you want to buy, buy, if you don't want to buy, bye, bye!"},
-	Sentence{Content: "One-one was a race horse. Two-two was one too. One-one won one race. Two-two won one too."},
-	Sentence{Content: "Whether the weather is warm, whether the weather is hot, we have to put up with the weather, whether we like it or not."},
+func GetSentences() []Sentence {
+	file, err := ioutil.ReadFile("./sample/sentences.json")
+	if err != nil {
+		panic(err)
+	}
+	var jsonType jsonObject
+	json.Unmarshal(file, &jsonType)
+	return jsonType.Object
 }
+
+func FindSentence(level int) Sentence {
+	return GetSentences()[level - 1]
+}
+
 
 func GetSentence(w http.ResponseWriter, r *http.Request) {
 	log.Printf("%s\t%s\t%s", r.Method, r.RequestURI, time.Since(time.Now()))
@@ -47,7 +43,7 @@ func GetSentence(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	sentenceId := vars["level"]
 	id, err:= strconv.Atoi(sentenceId)
-	if err != nil || len(sentences) < id || id < 1 {
+	if err != nil || len(GetSentences()) < id || id < 1 {
 		if err := json.NewEncoder(w).Encode(Error{StatusCode:400, Message:"Level not found"}); err != nil {
 			panic(err)
 		}
@@ -67,7 +63,7 @@ func PostSentence(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
 	sentenceId := vars["level"]
 	id, err:= strconv.Atoi(sentenceId)
-	if err != nil || len(sentences) < id || id < 1 {
+	if err != nil || len(GetSentences()) < id || id < 1 {
 		if err := json.NewEncoder(w).Encode(Error{StatusCode:400, Message:"Level not found"}); err != nil {
 			panic(err)
 		}
@@ -131,9 +127,7 @@ func Translate(file string) string {
 }
 
 
-func FindSentence(id int) Sentence {
-	return sentences[id - 1]
-}
+
 
 func Edit(change string) string {
 	change = strings.Replace(change, "?", "", -1)
